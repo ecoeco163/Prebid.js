@@ -212,6 +212,60 @@ const popInAdSize = [
 ];
 
 /**
+ * get screen size
+ *
+ * @returns {string} eg: "widthxheight"
+ */
+function getScreenSize() {
+  return [window.screen.width, window.screen.height].join('x');
+}
+
+/**
+ * @param {BidRequest} bidRequest
+ * @param bidderRequest
+ * @returns {string}
+ */
+function getReferrer(bidRequest, bidderRequest) {
+  let pageUrl;
+  if (bidRequest.params && bidRequest.params.referrer) {
+    pageUrl = bidRequest.params.referrer;
+  } else {
+    pageUrl = utils.deepAccess(bidderRequest, 'refererInfo.page');
+  }
+  return pageUrl;
+}
+
+/**
+ * format imp ad test ext params
+ *
+ * @param validBidRequest
+ * @param bidderRequest
+ */
+function addImpExtParams(bidRequest, bidderRequest) {
+  const { deepAccess } = utils;
+  const { params = {}, adUnitCode } = bidRequest;
+  const ext = {
+    adUnitCode: adUnitCode || '',
+    token: params.token || '',
+    siteId: params.siteId || '',
+    zoneId: params.zoneId || '',
+    publisher: params.publisher || '',
+    p_pos: params.position || '',
+    screenSize: getScreenSize(),
+    referrer: getReferrer(bidRequest, bidderRequest),
+    b_pos: deepAccess(bidRequest, 'mediaTypes.banner.pos', '', ''),
+    ortbUser: deepAccess(bidRequest, 'mediaTypes.ortb2.user', {}, {}),
+    ortbSite: deepAccess(bidRequest, 'mediaTypes.ortb2.site', {}, {}),
+    tid: deepAccess(bidRequest, 'ortb2Imp.ext.tid', '', ''),
+    browsiViewability: deepAccess(bidRequest, 'ortb2Imp.ext.data.browsi.browsiViewability', '', ''),
+    adserverName: deepAccess(bidRequest, 'ortb2Imp.ext.data.adserver.name', '', ''),
+    adslot: deepAccess(bidRequest, 'ortb2Imp.ext.data.adserver.adslot', '', ''),
+    gpid: deepAccess(bidRequest, 'ortb2Imp.ext.gpid', '', ''),
+  };
+  return ext;
+}
+
+/**
  * get aditem setting
  * @param {Array}  validBidRequests an an array of bids
  * @param {Object} bidderRequest  The master bidRequest object
@@ -263,12 +317,7 @@ function getItems(validBidRequests, bidderRequest) {
     }
 
     try {
-      ret.ext = {
-        adUnitCode: getKv(req, 'adUnitCode'),
-        adslot: getKv(req, 'ortb2Imp', 'ext', 'data', 'adserver', 'adslot'),
-        gpid: getKv(req, 'ortb2Imp', 'ext', 'gpid'),
-        token: getKv(req, 'params', 'token'),
-      };
+      ret.ext = addImpExtParams(req, bidderRequest);
     } catch (e) {}
 
     itemMaps[id] = {
@@ -321,13 +370,35 @@ function getParam(validBidRequests, bidderRequest) {
       device: {
         connectiontype: 0,
         js: 1,
-        os: navigator.platform || '',
-        ua: navigator.userAgent,
-        language: /en/.test(navigator.language) ? 'en' : navigator.language,
+        // os: navigator.platform || "",
+        // ua: navigator.userAgent,
+        // language: /en/.test(navigator.language) ? "en" : navigator.language,
+        ip: '104.28.99.201',
+        language: 'ja',
+        os: 'Apple iOS',
+        ua: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.3 Mobile/15E148 Safari/604.1',
       },
       ext: {
         eids,
         firstPartyData,
+        'appnexus': {
+          'publisher_integration': {
+            'is_header': 1
+          },
+          'seller_member_id': 11852
+        },
+        'schain': {
+          'complete': 1,
+          'nodes': [
+            {
+              'asi': 'appnexus.com',
+              'hp': 1,
+              'rid': 'e410a90b-06cd-4558-bcb3-13ba30442a22',
+              'sid': '11852'
+            }
+          ],
+          'ver': '1.0'
+        }
       },
       user: {
         buyeruid: getUserID(),
