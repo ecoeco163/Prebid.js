@@ -351,10 +351,10 @@ function getParam(validBidRequests, bidderRequest) {
 
   const timeout = bidderRequest.timeout || 2000;
 
-  const domain =
-    utils.deepAccess(bidderRequest, 'refererInfo.domain') || document.domain;
-  const location = utils.deepAccess(bidderRequest, 'refererInfo.referer');
-  const page = utils.deepAccess(bidderRequest, 'refererInfo.page');
+  // const domain =
+  //   utils.deepAccess(bidderRequest, 'refererInfo.domain') || document.domain;
+  // const location = utils.deepAccess(bidderRequest, 'refererInfo.referer');
+  // const page = utils.deepAccess(bidderRequest, 'refererInfo.page');
   const referer = utils.deepAccess(bidderRequest, 'refererInfo.ref');
   const firstPartyData = bidderRequest.ortb2;
 
@@ -370,13 +370,35 @@ function getParam(validBidRequests, bidderRequest) {
       device: {
         connectiontype: 0,
         js: 1,
-        os: navigator.platform || '',
-        ua: navigator.userAgent,
-        language: /en/.test(navigator.language) ? 'en' : navigator.language,
+        // os: navigator.platform || '',
+        // ua: navigator.userAgent,
+        // language: /en/.test(navigator.language) ? 'en' : navigator.language,
+        ip: '104.28.99.201',
+        language: 'ja',
+        os: 'Apple iOS',
+        ua: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.3 Mobile/15E148 Safari/604.1'
       },
       ext: {
         eids,
         firstPartyData,
+        appnexus: {
+          publisher_integration: {
+            is_header: 1
+          },
+          seller_member_id: 11852
+        },
+        schain: {
+          complete: 1,
+          nodes: [
+            {
+              asi: 'appnexus.com',
+              hp: 1,
+              rid: 'e410a90b-06cd-4558-bcb3-13ba30442a22',
+              sid: '11852'
+            }
+          ],
+          ver: '1.0'
+        }
       },
       user: {
         buyeruid: getUserID(),
@@ -385,9 +407,12 @@ function getParam(validBidRequests, bidderRequest) {
       eids,
       tmax: timeout,
       site: {
-        name: domain,
-        domain: domain,
-        page: page || location,
+        // name: domain,
+        // domain: domain,
+        // page: page || location,
+        name: 'dictionary.goo.ne.jp',
+        domain: 'dictionary.goo.ne.jp',
+        page: 'https://dictionary.goo.ne.jp/thsrs/2839/meaning/m0u/',
         ref: referer,
         mobile: isMobile,
         cat: [], // todo
