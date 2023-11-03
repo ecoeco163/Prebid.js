@@ -54,7 +54,7 @@ describe('discovery:BidAdapterTests', function () {
                 name: 'adserver_name',
                 adslot: 'adslot_name',
               },
-              pbadslot: '/10945543/S_topg_rec1_20230919'
+              pbadslot: '202309999'
             }
           }
         },
