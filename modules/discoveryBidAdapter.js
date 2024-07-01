@@ -202,23 +202,23 @@ function getBidFloor(bid) {
  */
 function transformSizes(bidReqSizes) {
   let sizes = [];
-  let sizeObj = {};
+  let adSize = {};
 
   if (
     utils.isArray(bidReqSizes) &&
     bidReqSizes.length === 2 &&
     !utils.isArray(bidReqSizes[0])
   ) {
-    sizeObj.width = parseInt(bidReqSizes[0], 10);
-    sizeObj.height = parseInt(bidReqSizes[1], 10);
-    sizes.push(sizeObj);
+    adSize.width = parseInt(bidReqSizes[0], 10);
+    adSize.height = parseInt(bidReqSizes[1], 10);
+    sizes.push(adSize);
   } else if (typeof bidReqSizes === 'object') {
     for (let i = 0; i < bidReqSizes.length; i++) {
       let size = bidReqSizes[i];
-      sizeObj = {};
-      sizeObj.width = parseInt(size[0], 10);
-      sizeObj.height = parseInt(size[1], 10);
-      sizes.push(sizeObj);
+      adSize = {};
+      adSize.width = parseInt(size[0], 10);
+      adSize.height = parseInt(size[1], 10);
+      sizes.push(adSize);
     }
   }
 
@@ -652,7 +652,8 @@ export const spec = {
         messageEvent.stopImmediatePropagation();
 
         const response = messageEvent.data;
-        if (!response.optout && response.mguid) {
+        const { optout, mguid } = response;
+        if (!optout && mguid) {
           storage.setCookie(COOKIE_KEY_MGUID, response.mguid, getCurrentTimeToUTCString());
         }
       }, true);
